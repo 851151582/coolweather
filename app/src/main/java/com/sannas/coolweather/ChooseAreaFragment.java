@@ -2,6 +2,7 @@ package com.sannas.coolweather;
 
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.database.DataSetObservable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -95,6 +96,12 @@ public class ChooseAreaFragment extends Fragment{
                 }else if(currentLevel == LEVEL_CITY){
                     selectedCity = cityList.get(position);
                     queryCountries();
+                }else if(currentLevel == LEVEL_COUNTRY){
+                    String weatherId = countryList.get(position).getWeatherId();
+                    Intent intent = new Intent(getActivity(),WeatherActivity.class);
+                    intent.putExtra("weather_id",weatherId);     //将选中县的weather_Id 传过去
+                    startActivity(intent);
+                    getActivity().finish();
                 }
             }
         });
