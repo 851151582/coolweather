@@ -3,13 +3,16 @@ package com.sannas.coolweather;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.DataSetObservable;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -98,10 +101,24 @@ public class ChooseAreaFragment extends Fragment{
                     queryCountries();
                 }else if(currentLevel == LEVEL_COUNTRY){
                     String weatherId = countryList.get(position).getWeatherId();
-                    Intent intent = new Intent(getActivity(),WeatherActivity.class);
-                    intent.putExtra("weather_id",weatherId);     //将选中县的weather_Id 传过去
-                    startActivity(intent);
-                    getActivity().finish();
+                    if(getActivity() instanceof MainActivity){
+                        Intent intent = new Intent(getActivity(),WeatherActivity.class);
+                        intent.putExtra("weather_id",weatherId);     //将选中县的weather_Id 传过去
+                        startActivity(intent);
+                        getActivity().finish();
+                    }else if(getActivity() instanceof WeatherActivity){
+                       /* //当点击上方的按钮时，会自动清除sp中保存的weather数据，同时返回到选择地区界面
+                        SharedPreferences.Editor editor = PreferenceManager
+                                .getDefaultSharedPreferences(getActivity()).edit();
+                        editor.remove("weather");
+                        editor.commit();*/
+                        WeatherActivity activity = (WeatherActivity) getActivity();
+                        activity.drawerLayout.closeDrawers();
+                        activity.swipeRefreshLayout.setRefreshing(true);
+                        activity.requestWeather(weatherId);
+
+                    }
+
                 }
             }
         });
